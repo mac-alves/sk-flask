@@ -105,12 +105,12 @@ def UserConfirm(id_user):
     if not user:
         return {"msg":"User id '{}' not found".format(id_user)}, 404
 
-    user.ATIVADO = True
+    user.ativado = True
     user.save_user()
 
     #return {"msg":"User id '{}' confirmed successfully".format(user_id)}, 200    
     headers = {'Content-Type':'text/html'}
-    return make_response(render_template('user_confirm.html', email=user.EMAIL, usuario=user.LOGIN), 200, headers)
+    return make_response(render_template('user_confirm.html', email=user.email, usuario=user.login), 200, headers)
 
 
 @bp.route('/login', methods=('POST',))
@@ -119,9 +119,9 @@ def UserLogin():
 
     user = UserController.find_by_login(dados['login'])
 
-    if user and safe_str_cmp(user.PASSWORD, dados['password']):
-        if user.ATIVADO:
-            token_de_acesso = create_access_token(identity=user.ID_USER)
+    if user and safe_str_cmp(user.password, dados['password']):
+        if user.ativado:
+            token_de_acesso = create_access_token(identity=user.id)
             return {'access_token':token_de_acesso}, 200
             
         return {'msg': 'User not confirmed'}, 400

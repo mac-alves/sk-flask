@@ -8,12 +8,12 @@ class UserController(UserModel):
 
     def send_confirmation_email(self):
         #'http://0.0.0.0:5000/confirm/{id_user}'
-        link  = request.url_root[:-1] + url_for('user.UserConfirm', id_user=self.ID_USER)
+        link  = request.url_root[:-1] + url_for('user.UserConfirm', id_user=self.id)
 
         return post('https://api.mailgun.net/v3/{}/messages'.format(getenv('MAILGUN_DOMAIN')),
                     auth=('api', getenv('MAILGUN_API_KEY')),
                     data={'from':'{} <{}>'.format(getenv('FROM_TITLE'), getenv('FROM_EMAIL')),
-                          'to': self.EMAIL,
+                          'to': self.email,
                           'subject':'Confirmação de Cadastro',
                           'text':'Confirme seu cadastro clicando no link a seguir: {}'.format(link),
                           'html':'<html><p>\
@@ -24,35 +24,35 @@ class UserController(UserModel):
     
     def json(self):
         return {
-            'id_user': self.ID_USER,
-            'login':self.LOGIN,
-            'email':self.EMAIL,
-            'ativado':self.ATIVADO
+            'id_user': self.id,
+            'login':self.login,
+            'email':self.email,
+            'ativado':self.ativado
         }
     
     @classmethod
     def find_user(cls, user_id):
-        user = cls.query.filter_by(ID_USER=user_id).first() #SELECT * FROM usuarios WHERE user_id=user_id LIMIT 1
+        user = cls.query.filter_by(id=user_id).first() #SELECT * FROM usuarios WHERE user_id=user_id LIMIT 1
         if user:
             return user
         return None
 
     @classmethod
     def find_by_login(cls, login):
-        user = cls.query.filter_by(LOGIN=login).first() #SELECT * FROM usuarios WHERE user_id=user_id LIMIT 1
+        user = cls.query.filter_by(login=login).first() #SELECT * FROM usuarios WHERE user_id=user_id LIMIT 1
         if user:
             return user
         return None
 
     @classmethod
     def find_by_email(cls, email):
-        email = cls.query.filter_by(EMAIL=email).first() 
+        email = cls.query.filter_by(email=email).first() 
         if email:
             return email
         return None
 
     def update_user(self, password):
-        self.PASSWORD = password
+        self.password = password
     
     def save_user(self):
         banco.session.add(self)
